@@ -134,11 +134,6 @@ POST /pdf/upload
 POST /pdf/ask
 ```
 
-## Resume version
-
-**GenAI PDF Research Assistant**  
-Built a FastAPI and Streamlit based document research assistant that allows users to upload PDF files, ask questions, retrieve relevant sections, and generate citation based answers. Added PDF parsing, local retrieval, page level evidence tracking, simple explanation mode, Docker support, tests, and optional local LLM support through Ollama without paid API keys.
-
 ## Limitations
 
 - Scanned image only PDFs may not work because OCR is not included.
