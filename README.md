@@ -1,91 +1,73 @@
+# GenAI PDF Research Assistant
 
-# GenAI Deep Research Assistant
+A local PDF research assistant built with FastAPI and Streamlit. Users can upload a PDF, ask questions about the document, retrieve relevant sections, and generate citation based answers.
 
-A clean, recruiter-friendly backend project that shows how a research assistant can answer a user question by searching a small knowledge base, retrieving relevant evidence, and producing a structured answer with citations.
+The project works without paid LLM APIs. It also supports optional local AI generation through Ollama.
 
-This project is built to be honest and easy to run in one day. It works locally without paid API keys using a deterministic demo generator. It is also prepared for optional LLM integration later.
+## What this project does
 
-## Why this project matters
+- Upload a PDF document
+- Extract readable text page by page
+- Split the document into searchable chunks
+- Ask questions about the uploaded document
+- Retrieve the most relevant sections
+- Generate an answer grounded in document evidence
+- Show page level citations
+- Support simple explanation mode
+- Optionally use a local Ollama model for smoother answers
+- Run with FastAPI, Streamlit, Docker, and tests
 
-Many teams need AI tools that do more than produce a quick answer. A useful research assistant should:
+## Why this project is useful
 
-- break a question into smaller research steps
-- retrieve relevant information from trusted documents
-- generate a structured answer
-- show the sources used
-- expose the workflow through a backend API
+Many students, engineers, and researchers work with long PDF documents such as textbooks, reports, research papers, manuals, and lecture notes. This assistant helps users ask questions about those documents and receive answers based on the uploaded content.
 
-This project demonstrates that workflow with FastAPI, local retrieval, and a simple UI.
+Unlike a normal chatbot, this project does not pretend to know everything. It searches the uploaded document and uses only the retrieved evidence. This makes the answer more transparent and easier to verify.
 
-## Features
-
-- FastAPI backend
-- Local document retrieval using TF-IDF
-- Multi-step research workflow
-- Source citations in every answer
-- Streamlit demo UI
-- Docker support
-- Pytest tests
-- GitHub Actions CI workflow
-- Clean structure for future LLM, RAG, and cloud deployment
-
-## Project structure
+## Architecture
 
 ```text
-genai-deep-research-assistant/
-├── app/
-│   ├── main.py
-│   ├── config.py
-│   ├── schemas.py
-│   ├── retriever.py
-│   ├── generator.py
-│   └── research.py
-├── data/
-│   └── knowledge_base/
-├── frontend/
-│   └── streamlit_app.py
-├── tests/
-│   └── test_api.py
-├── docs/
-│   └── architecture.md
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-├── .env.example
-└── README.md
+User uploads PDF
+    |
+    v
+PDF text extraction
+    |
+    v
+Page based chunking
+    |
+    v
+TF IDF retrieval
+    |
+    v
+Relevant evidence chunks
+    |
+    +--> Extractive answer mode
+    |
+    +--> Optional Ollama local LLM answer mode
+    |
+    v
+Final answer with page citations
 ```
 
 ## Quick start
 
-### 1. Create a virtual environment
-
-Windows PowerShell:
+### 1. Create and activate virtual environment
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\activate
-```
-
-macOS or Linux:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
 ```
 
 ### 2. Install dependencies
 
-```bash
-pip install -r requirements.txt
+```powershell
+python -m pip install -r requirements.txt
 ```
 
-### 3. Start the API
+### 3. Start the backend
 
-```bash
-uvicorn app.main:app --reload
+```powershell
+python -m uvicorn app.main:app --reload
 ```
 
 Open:
@@ -94,65 +76,80 @@ Open:
 http://127.0.0.1:8000/docs
 ```
 
-### 4. Test the research endpoint
+### 4. Start the frontend
 
-Example request:
+Open a second PowerShell window:
 
-```bash
-curl -X POST "http://127.0.0.1:8000/research" \
-  -H "Content-Type: application/json" \
-  -d "{\"question\":\"How can a company build a reliable enterprise AI research assistant?\",\"top_k\":4}"
+```powershell
+cd C:\Users\apexa\desktop\genai-deep-research-assistant
+.\.venv\Scripts\Activate.ps1
+python -m streamlit run frontend\streamlit_app.py
 ```
 
-### 5. Run the Streamlit UI
+Open:
 
-Open a second terminal and run:
-
-```bash
-streamlit run frontend/streamlit_app.py
+```text
+http://localhost:8501
 ```
 
-## Docker
+## Optional local AI with Ollama
 
-```bash
-docker build -t genai-deep-research-assistant .
-docker run -p 8000:8000 genai-deep-research-assistant
+Install Ollama on Windows, then download a small local model:
+
+```powershell
+ollama pull llama3.2:3b
 ```
 
-Or:
+Test it:
 
-```bash
-docker compose up --build
+```powershell
+ollama run llama3.2:3b
 ```
 
-## Example API response
+If Ollama is running, the app can use it for natural answers. If not, the app still works in extractive answer mode.
 
-```json
-{
-  "question": "How can a company build a reliable enterprise AI research assistant?",
-  "answer": "A reliable enterprise AI research assistant should combine retrieval, controlled generation, source tracking, and deployment monitoring...",
-  "citations": [
-    {
-      "source": "enterprise_ai_notes.md",
-      "chunk_id": "enterprise_ai_notes.md::chunk_1",
-      "score": 0.42
-    }
-  ]
-}
+## Example questions
+
+After uploading a semiconductor textbook or lecture PDF, ask:
+
+```text
+What is semiconductor doping?
+```
+
+```text
+Explain the difference between n type and p type semiconductors.
+```
+
+```text
+Explain this topic in a more understandable way.
+```
+
+## API endpoints
+
+```text
+GET  /health
+GET  /ollama/status
+POST /pdf/upload
+POST /pdf/ask
 ```
 
 ## Resume version
 
-Use this version in the resume after pushing the project to GitHub:
+**GenAI PDF Research Assistant**  
+Built a FastAPI and Streamlit based document research assistant that allows users to upload PDF files, ask questions, retrieve relevant sections, and generate citation based answers. Added PDF parsing, local retrieval, page level evidence tracking, simple explanation mode, Docker support, tests, and optional local LLM support through Ollama without paid API keys.
 
-**Deep Research Assistant using LLM-ready Retrieval Workflow**  
-Built a FastAPI-based research assistant that retrieves relevant document evidence, creates structured responses, and returns source citations. Designed the project with a modular backend, local retrieval, Docker support, tests, and a Streamlit demo UI to show how enterprise research workflows can be made transparent and reproducible.
+## Limitations
+
+- Scanned image only PDFs may not work because OCR is not included.
+- The answer quality depends on the quality of text extracted from the PDF.
+- Ollama generation depends on the local machine resources and downloaded model.
+- The current document index is stored in memory and resets when the backend restarts.
 
 ## Future improvements
 
-- Add Azure OpenAI or OpenAI based answer generation
-- Add vector database support such as FAISS or Chroma
-- Add authentication
-- Add document upload support
-- Add cloud deployment on AWS ECS or Azure App Service
-- Add evaluation metrics for retrieval quality
+- Add persistent document storage
+- Add OCR for scanned PDFs
+- Add FAISS or Chroma vector search
+- Add user authentication
+- Add chat history
+- Add cloud deployment
