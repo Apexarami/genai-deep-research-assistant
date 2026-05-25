@@ -1,4 +1,5 @@
 # GenAI PDF Research Assistant
+<img width="1878" height="849" alt="image" src="https://github.com/user-attachments/assets/8e42311d-c874-4bd4-9bad-119ea3b19e39" />
 
 A local PDF research assistant built with FastAPI and Streamlit. Users can upload a PDF, ask questions about the document, retrieve relevant sections, and generate citation based answers.
 
